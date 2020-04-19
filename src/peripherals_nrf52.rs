@@ -12,7 +12,7 @@ use p_hal::{delay::Delay, spim, twim};
 
 use p_hal::time::{U32Ext, Hertz};
 use embedded_hal::blocking::delay::DelayMs;
-use embedded_hal::digital::v2::{OutputPin, ToggleableOutputPin};
+use embedded_hal::digital::v2::{OutputPin, ToggleableOutputPin, StatefulOutputPin, toggleable};
 use bno080::interface::spi::SpiControlLines;
 
 pub type Spi1PortType = p_hal::spim::Spim<pac::SPIM0>;
@@ -24,36 +24,67 @@ type ResetPinType =  p_hal::gpio::p0::P0_26<p_hal::gpio::Output<p_hal::gpio::Pus
 
 pub type BnoSpi1Lines = SpiControlLines<Spi1PortType, ChipSelectPinType, HIntPinType, WakePinType, ResetPinType>;
 
+type InnerUserLed1Type = p_hal::gpio::p0::P0_17<p_hal::gpio::Output<p_hal::gpio::PushPull>>;
+type UserLed1Type = ToggleThing<InnerUserLed1Type>;
+
+pub struct ToggleThing<T> {
+    inner: T
+}
+
+impl<T> StatefulOutputPin for ToggleThing<T>
+    where T: StatefulOutputPin + OutputPin
+{
+    fn is_set_high(&self) -> Result<bool, Self::Error> {
+        self.inner.is_set_high()
+    }
+
+    fn is_set_low(&self) -> Result<bool, Self::Error> {
+        self.inner.is_set_low()
+    }
+}
+
+impl<T> OutputPin for ToggleThing<T>
+    where T: StatefulOutputPin + OutputPin
+{
+    type Error = T::Error;
+
+    fn set_low(&mut self) -> Result<(), Self::Error> {
+        self.inner.set_low()
+    }
+
+    fn set_high(&mut self) -> Result<(), Self::Error> {
+        self.inner.set_high()
+    }
+}
+
+impl<T> toggleable::Default for ToggleThing<T>
+where T: StatefulOutputPin + OutputPin
+{ }
 
 pub fn setup_peripherals() -> (
-    impl OutputPin + ToggleableOutputPin,
+    UserLed1Type,
     impl  DelayMs<u8>,
     ImuI2cPortType,
     BnoSpi1Lines,
 )
 {
     let cp = pac::CorePeripherals::take().unwrap();
-    let mut delay_source = Delay::new(cp.SYST);
+    let delay_source = Delay::new(cp.SYST);
 
     // PineTime has a 32 MHz HSE (HFXO) and a 32.768 kHz LSE (LFXO)
     let mut dp = pac::Peripherals::take().unwrap();
     let _clockit = dp
         .CLOCK
         .constrain()
-        //.set_lfclk_src_external(LfOscConfiguration::ExternalAndBypass)
         .start_lfclk()
         .enable_ext_hfosc();
-    // TODO configure low-speed clock with LfOscConfiguration: currently hangs
-    //.set_lfclk_src_external(LfOscConfiguration::ExternalNoBypass).start_lfclk();
 
     let port0 = dp.P0.split();
 
     // random number generator peripheral
     //let mut rng = dp.RNG.constrain();
-    let mut user_led1 =
-        port0.p0_17.into_push_pull_output(Level::High);
+    let user_led1: UserLed1Type = ToggleThing{ inner: port0.p0_17.into_push_pull_output(Level::High) };
 
-    let mut _user_butt = port0.p0_13.into_floating_input().degrade();
 
     let i2c0_pins = twim::Pins {
         scl: port0.p0_07.into_floating_input().degrade(),
