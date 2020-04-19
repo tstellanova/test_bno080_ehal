@@ -16,13 +16,6 @@ use embedded_hal::digital::v2::{OutputPin, ToggleableOutputPin};
 use bno080::interface::spi::SpiControlLines;
 
 pub type Spi1PortType = p_hal::spim::Spim<pac::SPIM0>;
-// p_hal::spi::Spi<pac::SPI1,
-//     (
-//         p_hal::gpio::gpioa::PA5<p_hal::gpio::AF5>, //SCLK
-//         p_hal::gpio::gpioa::PA6<p_hal::gpio::AF5>, //MISO?
-//         p_hal::gpio::gpioa::PA7<p_hal::gpio::AF5>, //MOSI?
-//     )
-// >;
 
 type ChipSelectPinType = p_hal::gpio::p0::P0_25<p_hal::gpio::Output<p_hal::gpio::PushPull>>;   //CSN
 type HIntPinType =   p_hal::gpio::Pin<p_hal::gpio::Input<p_hal::gpio::Floating>>; //HINTN
