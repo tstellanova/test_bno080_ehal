@@ -1,0 +1,45 @@
+[package]
+name = "test_bno080_ehal"
+version = "0.1.0"
+authors = ["Todd Stellanova <tstellanova@users.noreply.github.com>"]
+edition = "2018"
+
+
+[dependencies]
+cortex-m = "^0.6.0"
+cortex-m-rt = "0.6.11"
+embedded-hal = "0.2.3"
+
+panic-semihosting = "0.5.3"
+#panic-rtt-core = "0.1.0"
+
+bno080 = { path = "../BNO080"}
+#bno080 = { git = "https://github.com/tstellanova/bno080.git" }
+
+# Cortex-M family specialization:
+
+stm32f3 = {version = "0.10.0", features = ["stm32f303"], optional=true }
+#stm32f3xx-hal = { git = "https://github.com/stm32-rs/stm32f3xx-hal",  features = ["stm32f334", "rt"] }
+stm32f3xx-hal =  {version = "0.4.3", features = ["stm32f303", "rt"], optional=true }
+
+# stm32 family specialization:
+stm32h7 = { version = "0.10.0", features = ["stm32h743"], optional = true}
+#stm32h7xx-hal = { version = "0.3.0", features = ["stm32h743", "rt"], optional=true }
+stm32h7xx-hal = { git = "https://github.com/stm32-rs/stm32h7xx-hal", features = ["stm32h743", "rt"], optional=true}
+#stm32h7xx-hal = { path = "../stm32h7xx-hal",  features = ["stm32h743", "rt"], optional=true}
+
+stm32f4 = {version = "0.10.0", features = ["stm32f401"], optional = true }
+#stm32f4xx-hal = { version =" 0.6.0", features = ["stm32f401", "rt"], optional=true}
+#stm32f4xx-hal = { git = "https://github.com/stm32-rs/stm32f4xx-hal", features = ["stm32f401", "rt"], optional=true}
+stm32f4xx-hal = { git = " https://github.com/tstellanova/stm32f4xx-hal", features = ["stm32f401", "rt"], optional=true}
+#stm32f4xx-hal = { path = "../stm32f4xx-hal", features = ["stm32f407", "rt"], optional=true }
+
+nrf52832-hal = {version = "0.8.1", default-features = false, features = ["xxAA-package", "rt"], optional=true}
+
+# to select a stm32 family, use one of the following as the default
+[features]
+default = ["nrf52832"]
+stm32f3x = ["stm32f3", "stm32f3xx-hal"]
+stm32f4x = ["stm32f4", "stm32f4xx-hal"]
+stm32h7x = ["stm32h7", "stm32h7xx-hal"]
+nrf52832 = ["nrf52832-hal"]
