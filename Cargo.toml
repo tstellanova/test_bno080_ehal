@@ -38,7 +38,7 @@ nrf52832-hal = {version = "0.8.1", default-features = false, features = ["xxAA-p
 
 # to select a stm32 family, use one of the following as the default
 [features]
-default = ["nrf52832"]
+default = ["stm32f3x"]
 stm32f3x = ["stm32f3", "stm32f3xx-hal"]
 stm32f4x = ["stm32f4", "stm32f4xx-hal"]
 stm32h7x = ["stm32h7", "stm32h7xx-hal"]
