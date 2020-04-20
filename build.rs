@@ -1,5 +1,9 @@
 fn main() {
-    #[cfg(any(feature = "stm32f3x", feature = "stm32f4x", feature = "stm32h7x"))]
+    #[cfg(any(
+        feature = "stm32f3x",
+        feature = "stm32f4x",
+        feature = "stm32h7x"
+    ))]
     {
         use std::env;
         use std::fs::File;

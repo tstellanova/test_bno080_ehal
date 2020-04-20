@@ -63,7 +63,13 @@ pub fn setup_peripherals() -> (
             .into_open_drain_output(&mut gpiob.moder, &mut gpiob.otyper)
             .into_af4(&mut gpiob.moder, &mut gpiob.afrh);
 
-        p_hal::i2c::I2c::i2c1(dp.I2C1, (scl, sda), i2c_freq, clocks, &mut rcc.apb1)
+        p_hal::i2c::I2c::i2c1(
+            dp.I2C1,
+            (scl, sda),
+            i2c_freq,
+            clocks,
+            &mut rcc.apb1,
+        )
     };
 
     let spi_ctrl_lines = {
@@ -146,10 +152,19 @@ pub type Spi1PortType = p_hal::spi::Spi<
     ),
 >;
 
-type ChipSelectPinType = p_hal::gpio::gpioa::PA15<p_hal::gpio::Output<p_hal::gpio::OpenDrain>>; //CSN
-type HIntPinType = p_hal::gpio::gpiob::PB0<p_hal::gpio::Input<p_hal::gpio::PullUp>>; //HINTN
-type WakePinType = p_hal::gpio::gpiob::PB1<p_hal::gpio::Output<p_hal::gpio::OpenDrain>>; //PushPull>>; // WAKE
-type ResetPinType = p_hal::gpio::gpiob::PB10<p_hal::gpio::Output<p_hal::gpio::OpenDrain>>; // RESET
+type ChipSelectPinType =
+    p_hal::gpio::gpioa::PA15<p_hal::gpio::Output<p_hal::gpio::OpenDrain>>; //CSN
+type HIntPinType =
+    p_hal::gpio::gpiob::PB0<p_hal::gpio::Input<p_hal::gpio::PullUp>>; //HINTN
+type WakePinType =
+    p_hal::gpio::gpiob::PB1<p_hal::gpio::Output<p_hal::gpio::OpenDrain>>; //PushPull>>; // WAKE
+type ResetPinType =
+    p_hal::gpio::gpiob::PB10<p_hal::gpio::Output<p_hal::gpio::OpenDrain>>; // RESET
 
-pub type BnoSpi1Lines =
-    SpiControlLines<Spi1PortType, ChipSelectPinType, HIntPinType, WakePinType, ResetPinType>;
+pub type BnoSpi1Lines = SpiControlLines<
+    Spi1PortType,
+    ChipSelectPinType,
+    HIntPinType,
+    WakePinType,
+    ResetPinType,
+>;

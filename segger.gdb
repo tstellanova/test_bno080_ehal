@@ -22,7 +22,12 @@ define hook-quit
     set confirm off
 end
 
+
+# monitor semihosting enable
+
 load
 
 #break rust_begin_unwind
 run
+
+#stepi

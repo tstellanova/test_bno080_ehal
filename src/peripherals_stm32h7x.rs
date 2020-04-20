@@ -76,10 +76,19 @@ pub type Spi1PortType = p_hal::spi::Spi<
     ),
 >;
 
-type ChipSelectPinType = p_hal::gpio::gpioa::PA15<p_hal::gpio::Output<p_hal::gpio::OpenDrain>>; //CSN
-type HIntPinType = p_hal::gpio::gpiob::PB0<p_hal::gpio::Input<p_hal::gpio::PullUp>>; //HINTN
-type WakePinType = p_hal::gpio::gpiob::PB1<p_hal::gpio::Output<p_hal::gpio::OpenDrain>>; //PushPull>>; // WAKE
-type ResetPinType = p_hal::gpio::gpiob::PB10<p_hal::gpio::Output<p_hal::gpio::OpenDrain>>; // RESET
+type ChipSelectPinType =
+    p_hal::gpio::gpioa::PA15<p_hal::gpio::Output<p_hal::gpio::OpenDrain>>; //CSN
+type HIntPinType =
+    p_hal::gpio::gpiob::PB0<p_hal::gpio::Input<p_hal::gpio::PullUp>>; //HINTN
+type WakePinType =
+    p_hal::gpio::gpiob::PB1<p_hal::gpio::Output<p_hal::gpio::OpenDrain>>; //PushPull>>; // WAKE
+type ResetPinType =
+    p_hal::gpio::gpiob::PB10<p_hal::gpio::Output<p_hal::gpio::OpenDrain>>; // RESET
 
-pub type BnoSpi1Lines =
-    SpiControlLines<Spi1PortType, ChipSelectPinType, HIntPinType, WakePinType, ResetPinType>;
+pub type BnoSpi1Lines = SpiControlLines<
+    Spi1PortType,
+    ChipSelectPinType,
+    HIntPinType,
+    WakePinType,
+    ResetPinType,
+>;

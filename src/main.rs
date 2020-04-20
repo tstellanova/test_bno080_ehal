@@ -4,7 +4,12 @@
 use cortex_m_rt as rt;
 use rt::entry;
 
+// #[cfg(feature = "nrf52832")]
+// use panic_rtt_core::{self, rprintln, rtt_init_print};
+
+// #[cfg(not(feature = "nrf52832"))]
 use panic_semihosting as _;
+use cortex_m_semihosting::hprintln;
 
 use bno080::wrapper::BNO080;
 // use bno080::interface::{ I2cInterface, SpiInterface};
@@ -40,14 +45,21 @@ use peripherals_stm32f4x as peripherals;
 
 #[entry]
 fn main() -> ! {
+    // rtt_init_print!(NoBlockTrim);
+    hprintln!("-- > MAIN --").unwrap();
+
     let (mut user_led1, mut delay_source, i2c_port, spi_control_lines) =
         peripherals::setup_peripherals();
 
-    let spi_iface = bno080::interface::SpiInterface::new(spi_control_lines);
-    let _i2c_iface =
-        bno080::interface::I2cInterface::new(i2c_port, bno080::interface::i2c::DEFAULT_ADDRESS);
+    // let iface = bno080::interface::SpiInterface::new(spi_control_lines);
+    let iface = bno080::interface::I2cInterface::new(
+        i2c_port,
+        bno080::interface::i2c::DEFAULT_ADDRESS,
+    );
 
-    let mut imu_driver = BNO080::new_with_interface(spi_iface);
+    //cortex_m::asm::bkpt();
+
+    let mut imu_driver = BNO080::new_with_interface(iface);
     imu_driver.init(&mut delay_source).unwrap();
     imu_driver
         .enable_rotation_vector(IMU_REPORTING_INTERVAL_MS)
@@ -57,7 +69,7 @@ fn main() -> ! {
 
     loop {
         let msg_count = imu_driver.handle_all_messages(&mut delay_source);
-        //hprintln!("> {}", msg_count).unwrap();
+        hprintln!("> {}", msg_count).unwrap();
         let _ = user_led1.toggle();
         delay_source.delay_ms(25u8);
     }
