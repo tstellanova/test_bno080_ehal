@@ -99,23 +99,18 @@ pub fn setup_peripherals() -> (
         );
 
         // SPI chip select CS
-        let csn = gpioa
-            .pa15
-            .into_open_drain_output(&mut gpioa.moder, &mut gpioa.otyper);
-        //.into_push_pull_output(&mut gpioa.moder, &mut gpioa.otyper);
+        let csn = gpiob
+            .pb0
+            // .into_open_drain_output(&mut gpiob.moder, &mut gpiob.otyper);
+            .into_push_pull_output(&mut gpiob.moder, &mut gpiob.otyper);
 
         // HINTN interrupt pin
         let hintn = gpiob
-            .pb0
+            .pb1
             .into_pull_up_input(&mut gpiob.moder, &mut gpiob.pupdr);
 
         // WAKEN pin / PS0
         let waken = DummyOutputPin::new();
-
-        // let waken = gpiob
-        //     .pb1
-        //     .into_open_drain_output(&mut gpiob.moder, &mut gpiob.otyper);
-        // .into_push_pull_output(&mut gpiob.moder, &mut gpiob.otyper);
 
         // NRSTN pin
         let reset_pin = gpiob
@@ -146,9 +141,6 @@ type ImuI2cPortType = p_hal::i2c::I2c<
 pub type Spi1PortType = p_hal::spi::Spi<
     pac::SPI1,
     (
-        // p_hal::gpio::gpiob::PB3<p_hal::gpio::AF5>, //SCLK
-        // p_hal::gpio::gpiob::PB4<p_hal::gpio::AF5>, //MISO?
-        // p_hal::gpio::gpiob::PB5<p_hal::gpio::AF5>, //MOSI?
         p_hal::gpio::gpioa::PA5<p_hal::gpio::AF5>, //SCLK
         p_hal::gpio::gpioa::PA6<p_hal::gpio::AF5>, //MISO?
         p_hal::gpio::gpioa::PA7<p_hal::gpio::AF5>, //MOSI?
@@ -156,11 +148,10 @@ pub type Spi1PortType = p_hal::spi::Spi<
 >;
 
 type ChipSelectPinType =
-    p_hal::gpio::gpioa::PA15<p_hal::gpio::Output<p_hal::gpio::OpenDrain>>; //CSN
+    p_hal::gpio::gpiob::PB0<p_hal::gpio::Output<p_hal::gpio::PushPull>>; //OpenDrain>>; //CSN
 type HIntPinType =
-    p_hal::gpio::gpiob::PB0<p_hal::gpio::Input<p_hal::gpio::PullUp>>; //HINTN
+    p_hal::gpio::gpiob::PB1<p_hal::gpio::Input<p_hal::gpio::PullUp>>; //HINTN
 type WakePinType = bno080::interface::dummy_output_pin::DummyOutputPin; // WAKE
-                                                                        // p_hal::gpio::gpiob::PB1<p_hal::gpio::Output<p_hal::gpio::OpenDrain>>; //PushPull>>; // WAKE
 type ResetPinType =
     p_hal::gpio::gpiob::PB10<p_hal::gpio::Output<p_hal::gpio::PushPull>>; // RESET //OpenDrain
 
