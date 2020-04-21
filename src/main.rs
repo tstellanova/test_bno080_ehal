@@ -6,7 +6,6 @@ use rt::entry;
 
 use panic_rtt_core::{self, rprintln, rtt_init_print};
 
-
 use bno080::wrapper::BNO080;
 // use bno080::interface::{ I2cInterface, SpiInterface};
 use embedded_hal::blocking::delay::DelayMs;
@@ -47,11 +46,11 @@ fn main() -> ! {
     let (mut user_led1, mut delay_source, _i2c_port, _spi_control_lines) =
         peripherals::setup_peripherals();
 
+    // SPI interface
     //let iface = bno080::interface::SpiInterface::new(_spi_control_lines);
-    let iface = bno080::interface::I2cInterface::new(
-        _i2c_port,
-        bno080::interface::i2c::DEFAULT_ADDRESS,
-    );
+
+    // I2C interface
+    let iface = bno080::interface::I2cInterface::default(_i2c_port);
 
     //cortex_m::asm::bkpt();
 
@@ -65,7 +64,9 @@ fn main() -> ! {
 
     loop {
         let msg_count = imu_driver.handle_all_messages(&mut delay_source);
-        rprintln!("> {}", msg_count);
+        if msg_count > 0 {
+            rprintln!("> {}", msg_count);
+        }
         let _ = user_led1.toggle();
         delay_source.delay_ms(25u8);
     }
