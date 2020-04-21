@@ -16,8 +16,8 @@ panic-rtt-core = {version="0.1.0", optional=true}
 panic-halt = "0.2.0"
 
 #bno080 = { path = "../BNO080", features = ["rttdebug"] }
-bno080 = { git = "https://github.com/tstellanova/bno080.git" }
-# bno080 = "0.1.1"
+bno080 = { git = "https://github.com/tstellanova/bno080.git", features = ["rttdebug"] }
+#bno080 = "0.1.1"
 
 # Cortex-M family specialization:
 
