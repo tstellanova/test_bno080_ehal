@@ -22,8 +22,7 @@ define hook-quit
     set confirm off
 end
 
-
-# monitor semihosting enable
+monitor semihosting enable
 
 load
 

@@ -117,8 +117,8 @@ pub fn setup_peripherals() -> (
         // NRSTN pin
         let reset_pin = gpiob
             .pb10
-            .into_open_drain_output(&mut gpiob.moder, &mut gpiob.otyper);
-        //.into_push_pull_output(&mut gpiob.moder, &mut gpiob.otyper);
+            //.into_open_drain_output(&mut gpiob.moder, &mut gpiob.otyper);
+            .into_push_pull_output(&mut gpiob.moder, &mut gpiob.otyper);
 
         SpiControlLines {
             spi: spi_port,
@@ -159,7 +159,7 @@ type HIntPinType =
 type WakePinType =
     p_hal::gpio::gpiob::PB1<p_hal::gpio::Output<p_hal::gpio::OpenDrain>>; //PushPull>>; // WAKE
 type ResetPinType =
-    p_hal::gpio::gpiob::PB10<p_hal::gpio::Output<p_hal::gpio::OpenDrain>>; // RESET
+    p_hal::gpio::gpiob::PB10<p_hal::gpio::Output<p_hal::gpio::PushPull >>; // RESET //OpenDrain
 
 pub type BnoSpi1Lines = SpiControlLines<
     Spi1PortType,
