@@ -37,6 +37,7 @@ use peripherals_stm32f4x as peripherals;
 mod peripherals_stm32h7x;
 #[cfg(feature = "stm32h7x")]
 use peripherals_stm32f4x as peripherals;
+use cortex_m::asm::bkpt;
 
 #[entry]
 fn main() -> ! {
@@ -56,6 +57,8 @@ fn main() -> ! {
 
     let mut imu_driver = BNO080::new_with_interface(iface);
     imu_driver.init(&mut delay_source).unwrap();
+    // cortex_m::asm::bkpt();
+
     imu_driver
         .enable_rotation_vector(IMU_REPORTING_INTERVAL_MS)
         .unwrap();
@@ -66,8 +69,8 @@ fn main() -> ! {
     let _ = user_led1.set_low();
 
     loop {
-        let msg_count = imu_driver.handle_all_messages(&mut delay_source);
-        rprintln!("> {}", msg_count);
+        let _msg_count = imu_driver.handle_all_messages(&mut delay_source, 1u8);
+        // rprintln!("> {}", _msg_count);
 
         let _ = user_led1.toggle();
         delay_source.delay_ms(loop_interval);

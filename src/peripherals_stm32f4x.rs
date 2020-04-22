@@ -38,7 +38,7 @@ pub fn setup_peripherals() -> (
     let clocks = rcc
         .cfgr
         .use_hse(25.mhz()) //f401cb  board has 25 MHz crystal for HSE
-        .sysclk(72.mhz())
+        .sysclk(84.mhz())
         .pclk1(48.mhz())
         .pclk2(48.mhz()) // required for spi1
         .freeze();

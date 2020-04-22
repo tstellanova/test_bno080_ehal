@@ -79,16 +79,6 @@ pub fn setup_peripherals() -> (
         let miso = gpioa.pa6.into_af5(&mut gpioa.moder, &mut gpioa.afrl);
         let mosi = gpioa.pa7.into_af5(&mut gpioa.moder, &mut gpioa.afrl);
 
-        // let sck = gpiob.pb3
-        //     .into_push_pull_output(&mut gpiob.moder, &mut gpiob.otyper)
-        //     .into_af5(&mut gpiob.moder, &mut gpiob.afrl);
-        // let miso = gpiob.pb4
-        //     .into_floating_input(&mut gpiob.moder, &mut gpiob.pupdr)
-        //     .into_af5(&mut gpiob.moder, &mut gpiob.afrl);
-        // let mosi = gpiob.pb5
-        //     .into_push_pull_output(&mut gpiob.moder, &mut gpiob.otyper)
-        //     .into_af5(&mut gpiob.moder, &mut gpiob.afrl);
-
         let spi_port = p_hal::spi::Spi::spi1(
             dp.SPI1,
             (sck, miso, mosi),

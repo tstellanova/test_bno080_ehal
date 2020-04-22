@@ -25,7 +25,7 @@ end
 # monitor semihosting enable
 
 # *try* to stop at the user entry point (it might be gone due to inlining)
-break main
+# break main
 
 load
 
