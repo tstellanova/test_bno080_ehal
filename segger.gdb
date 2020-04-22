@@ -22,7 +22,10 @@ define hook-quit
     set confirm off
 end
 
-monitor semihosting enable
+# monitor semihosting enable
+
+# *try* to stop at the user entry point (it might be gone due to inlining)
+break main
 
 load
 

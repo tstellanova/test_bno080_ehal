@@ -8,9 +8,10 @@ use embedded_hal::blocking::delay::DelayMs;
 use embedded_hal::digital::v2::{OutputPin, ToggleableOutputPin};
 use p_hal::gpio::GpioExt;
 use p_hal::rcc::RccExt;
-use p_hal::time::{Hertz, U32Ext};
+use p_hal::time::{U32Ext};
 
 use bno080::interface::spi::SpiControlLines;
+use bno080::interface::dummy_output_pin::DummyOutputPin;
 
 pub fn setup_peripherals() -> (
     impl OutputPin + ToggleableOutputPin,
@@ -37,22 +38,17 @@ pub fn setup_peripherals() -> (
     let clocks = rcc
         .cfgr
         .use_hse(25.mhz()) //f401cb  board has 25 MHz crystal for HSE
-        // .sysclk(128.mhz())
-        // .pclk1(48.mhz())
-        // .pclk2(48.mhz())
+        .sysclk(72.mhz())
+        .pclk1(48.mhz())
+        .pclk2(48.mhz()) // required for spi1
         .freeze();
 
     let delay_source = p_hal::delay::Delay::new(cp.SYST, clocks);
 
-    // let hclk = clocks.hclk();
-    // let rng_clk = clocks.pll48clk().unwrap_or(0u32.hz());
-    // let pclk1 = clocks.pclk1();
-    // d_println!(get_debug_log(), "hclk: {} /16: {} pclk1: {} rng_clk: {}", hclk.0, hclk.0 / 16, pclk1.0, rng_clk.0);
 
     let gpioa = dp.GPIOA.split();
     let gpiob = dp.GPIOB.split();
     let gpioc = dp.GPIOC.split();
-    // let gpiod = dp.GPIOD.split();
 
     let user_led1 = gpioc.pc13.into_push_pull_output(); //f401CxUx
                                                         // let user_led1 = gpiod.pd12.into_push_pull_output(); //f4discovery
@@ -74,7 +70,7 @@ pub fn setup_peripherals() -> (
             //.internal_pull_up(true)
             .set_open_drain();
 
-        p_hal::i2c::I2c::i2c1(dp.I2C1, (scl, sda), 1000.khz(), clocks)
+        p_hal::i2c::I2c::i2c1(dp.I2C1, (scl, sda), 400.khz(), clocks)
     };
 
     let spi_ctrl_lines = {
@@ -86,25 +82,24 @@ pub fn setup_peripherals() -> (
         let spi_port = p_hal::spi::Spi::spi1(
             dp.SPI1,
             (sck, miso, mosi),
-            embedded_hal::spi::MODE_0,
+            embedded_hal::spi::MODE_3,
             3_000_000.hz(),
             clocks,
         );
 
         // SPI chip select CS
-        let csn = gpioa.pa15.into_open_drain_output();
-        //.into_push_pull_output(&mut gpioa.moder, &mut gpioa.otyper);
+        let mut csn = gpiob.pb0.into_push_pull_output();
+        let _ = csn.set_high();
 
         // HINTN interrupt pin
-        let hintn = gpiob.pb0.into_pull_up_input();
+        let hintn = gpiob.pb1.into_pull_up_input();
 
         // WAKEN pin / PS0
-        let waken = gpiob.pb1.into_open_drain_output();
-        // .into_push_pull_output(&mut gpiob.moder, &mut gpiob.otyper);
+        let waken = DummyOutputPin::new();
 
         // NRSTN pin
-        let reset_pin = gpiob.pb10.into_open_drain_output();
-        //.into_push_pull_output(&mut gpiob.moder, &mut gpiob.otyper);
+        let mut reset_pin = gpiob.pb10.into_push_pull_output();
+        let _ = reset_pin.set_high();
 
         SpiControlLines {
             spi: spi_port,
@@ -136,13 +131,15 @@ pub type Spi1PortType = p_hal::spi::Spi<
 >;
 
 type ChipSelectPinType =
-    p_hal::gpio::gpioa::PA15<p_hal::gpio::Output<p_hal::gpio::OpenDrain>>; //CSN
+    p_hal::gpio::gpiob::PB0<p_hal::gpio::Output<p_hal::gpio::PushPull>>; //CSN
+
 type HIntPinType =
-    p_hal::gpio::gpiob::PB0<p_hal::gpio::Input<p_hal::gpio::PullUp>>; //HINTN
-type WakePinType =
-    p_hal::gpio::gpiob::PB1<p_hal::gpio::Output<p_hal::gpio::OpenDrain>>; //PushPull>>; // WAKE
+    p_hal::gpio::gpiob::PB1<p_hal::gpio::Input<p_hal::gpio::PullUp>>; //HINTN
+
+type WakePinType = bno080::interface::dummy_output_pin::DummyOutputPin; // WAKE
+
 type ResetPinType =
-    p_hal::gpio::gpiob::PB10<p_hal::gpio::Output<p_hal::gpio::OpenDrain>>; // RESET
+    p_hal::gpio::gpiob::PB10<p_hal::gpio::Output<p_hal::gpio::PushPull>>; // RESET //OpenDrain
 
 pub type BnoSpi1Lines = SpiControlLines<
     Spi1PortType,

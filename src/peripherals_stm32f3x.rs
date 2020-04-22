@@ -92,7 +92,7 @@ pub fn setup_peripherals() -> (
         let spi_port = p_hal::spi::Spi::spi1(
             dp.SPI1,
             (sck, miso, mosi),
-            embedded_hal::spi::MODE_0,
+            embedded_hal::spi::MODE_3,
             3_000_000.hz(),
             clocks,
             &mut rcc.apb2,
