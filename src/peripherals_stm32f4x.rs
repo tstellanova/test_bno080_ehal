@@ -8,10 +8,10 @@ use embedded_hal::blocking::delay::DelayMs;
 use embedded_hal::digital::v2::{OutputPin, ToggleableOutputPin};
 use p_hal::gpio::GpioExt;
 use p_hal::rcc::RccExt;
-use p_hal::time::{U32Ext};
+use p_hal::time::U32Ext;
 
-use bno080::interface::spi::SpiControlLines;
 use bno080::interface::dummy_output_pin::DummyOutputPin;
+use bno080::interface::spi::SpiControlLines;
 
 pub fn setup_peripherals() -> (
     impl OutputPin + ToggleableOutputPin,
@@ -45,7 +45,6 @@ pub fn setup_peripherals() -> (
 
     let delay_source = p_hal::delay::Delay::new(cp.SYST, clocks);
 
-
     let gpioa = dp.GPIOA.split();
     let gpiob = dp.GPIOB.split();
     let gpioc = dp.GPIOC.split();
@@ -61,13 +60,13 @@ pub fn setup_peripherals() -> (
         let scl = gpiob
             .pb8
             .into_alternate_af4()
-            //.internal_pull_up(true)
+            .internal_pull_up(true)
             .set_open_drain();
 
         let sda = gpiob
             .pb9
             .into_alternate_af4()
-            //.internal_pull_up(true)
+            .internal_pull_up(true)
             .set_open_drain();
 
         p_hal::i2c::I2c::i2c1(dp.I2C1, (scl, sda), 400.khz(), clocks)
