@@ -37,22 +37,21 @@ use peripherals_stm32f4x as peripherals;
 mod peripherals_stm32h7x;
 #[cfg(feature = "stm32h7x")]
 use peripherals_stm32f4x as peripherals;
-use cortex_m::asm::bkpt;
+
 
 #[entry]
 fn main() -> ! {
     rtt_init_print!(NoBlockTrim);
     rprintln!("-- > MAIN --");
 
-    let (mut user_led1, mut delay_source, _i2c_port, _spi_control_lines) =
+    let (mut user_led1, mut delay_source, _i2c_port, mut _spi_control_lines) =
         peripherals::setup_peripherals();
 
     // SPI interface
-    let iface = bno080::interface::SpiInterface::new(_spi_control_lines);
+    // let iface = bno080::interface::SpiInterface::new(_spi_control_lines);
 
     // I2C interface
-    // let iface = bno080::interface::I2cInterface::default(_i2c_port);
-
+    let iface = bno080::interface::I2cInterface::default(_i2c_port);
     //cortex_m::asm::bkpt();
 
     let mut imu_driver = BNO080::new_with_interface(iface);
