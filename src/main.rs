@@ -48,10 +48,10 @@ fn main() -> ! {
         peripherals::setup_peripherals();
 
     // SPI interface
-    // let iface = bno080::interface::SpiInterface::new(_spi_control_lines);
+    let iface = bno080::interface::SpiInterface::new(_spi_control_lines);
 
     // I2C interface
-    let iface = bno080::interface::I2cInterface::default(_i2c_port);
+    // let iface = bno080::interface::I2cInterface::default(_i2c_port);
     //cortex_m::asm::bkpt();
 
     let mut imu_driver = BNO080::new_with_interface(iface);

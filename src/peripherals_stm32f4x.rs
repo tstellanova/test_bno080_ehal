@@ -10,7 +10,6 @@ use p_hal::gpio::GpioExt;
 use p_hal::rcc::RccExt;
 use p_hal::time::U32Ext;
 
-use bno080::interface::dummy_output_pin::DummyOutputPin;
 use bno080::interface::spi::SpiControlLines;
 
 pub fn setup_peripherals() -> (
@@ -93,9 +92,6 @@ pub fn setup_peripherals() -> (
         // HINTN interrupt pin
         let hintn = gpiob.pb1.into_pull_up_input();
 
-        // WAKEN pin / PS0
-        let waken = DummyOutputPin::new();
-
         // NRSTN pin
         let mut reset_pin = gpiob.pb10.into_push_pull_output();
         let _ = reset_pin.set_high();
@@ -104,7 +100,6 @@ pub fn setup_peripherals() -> (
             spi: spi_port,
             csn,
             hintn,
-            waken,
             reset: reset_pin,
         }
     };
@@ -135,7 +130,6 @@ type ChipSelectPinType =
 type HIntPinType =
     p_hal::gpio::gpiob::PB1<p_hal::gpio::Input<p_hal::gpio::PullUp>>; //HINTN
 
-type WakePinType = bno080::interface::dummy_output_pin::DummyOutputPin; // WAKE
 
 type ResetPinType =
     p_hal::gpio::gpiob::PB10<p_hal::gpio::Output<p_hal::gpio::PushPull>>; // RESET //OpenDrain
@@ -144,6 +138,5 @@ pub type BnoSpi1Lines = SpiControlLines<
     Spi1PortType,
     ChipSelectPinType,
     HIntPinType,
-    WakePinType,
     ResetPinType,
 >;

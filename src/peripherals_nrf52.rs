@@ -16,7 +16,6 @@ pub type Spi1PortType = p_hal::spim::Spim<pac::SPIM0>;
 type ChipSelectPinType =
     p_hal::gpio::Pin<p_hal::gpio::Output<p_hal::gpio::PushPull>>; //CSN
 type HIntPinType = p_hal::gpio::Pin<p_hal::gpio::Input<p_hal::gpio::Floating>>; //HINTN
-type WakePinType = p_hal::gpio::Pin<p_hal::gpio::Output<p_hal::gpio::PushPull>>; // WAKE
 type ResetPinType =
     p_hal::gpio::Pin<p_hal::gpio::Output<p_hal::gpio::PushPull>>; // RESET
 
@@ -24,7 +23,6 @@ pub type BnoSpi1Lines = SpiControlLines<
     Spi1PortType,
     ChipSelectPinType,
     HIntPinType,
-    WakePinType,
     ResetPinType,
 >;
 
@@ -114,9 +112,6 @@ pub fn setup_peripherals(
         // HINTN interrupt pin
         let hintn = port0.p0_24.into_floating_input().degrade();
 
-        // WAKEN pin / PS0
-        let waken = port0.p0_18.into_push_pull_output(Level::High).degrade();
-
         // NRSTN pin
         let reset_pin =
             port0.p0_23.into_push_pull_output(Level::High).degrade();
@@ -125,7 +120,6 @@ pub fn setup_peripherals(
             spi: spim0,
             csn,
             hintn,
-            waken,
             reset: reset_pin,
         }
     };
@@ -134,7 +128,3 @@ pub fn setup_peripherals(
 }
 
 type ImuI2cPortType = p_hal::twim::Twim<pac::TWIM1>;
-// type ImuI2cPortType = p_hal::i2c::I2c<I2C1,
-//     (p_hal::gpio::gpiob::PB8<p_hal::gpio::AF4>,
-//      p_hal::gpio::gpiob::PB9<p_hal::gpio::AF4>)
-// >;
