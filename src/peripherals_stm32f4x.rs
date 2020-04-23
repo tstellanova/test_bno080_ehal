@@ -130,13 +130,8 @@ type ChipSelectPinType =
 type HIntPinType =
     p_hal::gpio::gpiob::PB1<p_hal::gpio::Input<p_hal::gpio::PullUp>>; //HINTN
 
-
 type ResetPinType =
     p_hal::gpio::gpiob::PB10<p_hal::gpio::Output<p_hal::gpio::PushPull>>; // RESET //OpenDrain
 
-pub type BnoSpi1Lines = SpiControlLines<
-    Spi1PortType,
-    ChipSelectPinType,
-    HIntPinType,
-    ResetPinType,
->;
+pub type BnoSpi1Lines =
+    SpiControlLines<Spi1PortType, ChipSelectPinType, HIntPinType, ResetPinType>;

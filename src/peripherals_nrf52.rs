@@ -19,12 +19,8 @@ type HIntPinType = p_hal::gpio::Pin<p_hal::gpio::Input<p_hal::gpio::Floating>>; 
 type ResetPinType =
     p_hal::gpio::Pin<p_hal::gpio::Output<p_hal::gpio::PushPull>>; // RESET
 
-pub type BnoSpi1Lines = SpiControlLines<
-    Spi1PortType,
-    ChipSelectPinType,
-    HIntPinType,
-    ResetPinType,
->;
+pub type BnoSpi1Lines =
+    SpiControlLines<Spi1PortType, ChipSelectPinType, HIntPinType, ResetPinType>;
 
 type InnerUserLed1Type =
     p_hal::gpio::p0::P0_17<p_hal::gpio::Output<p_hal::gpio::PushPull>>;

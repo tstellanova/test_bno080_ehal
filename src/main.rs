@@ -38,7 +38,6 @@ mod peripherals_stm32h7x;
 #[cfg(feature = "stm32h7x")]
 use peripherals_stm32f4x as peripherals;
 
-
 #[entry]
 fn main() -> ! {
     rtt_init_print!(NoBlockTrim);
@@ -68,7 +67,9 @@ fn main() -> ! {
 
     loop {
         let _msg_count = imu_driver.handle_all_messages(&mut delay_source, 1u8);
-        if _msg_count > 0 { rprintln!("> {}", _msg_count); }
+        if _msg_count > 0 {
+            rprintln!("> {}", _msg_count);
+        }
 
         let _ = user_led1.toggle();
         delay_source.delay_ms(loop_interval);
