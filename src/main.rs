@@ -52,12 +52,11 @@ fn main() -> ! {
 
     // I2C interface
     // let iface = bno080::interface::I2cInterface::default(_i2c_port);
-    //cortex_m::asm::bkpt();
 
     let mut imu_driver = BNO080::new_with_interface(iface);
     imu_driver.init(&mut delay_source).unwrap();
-    // cortex_m::asm::bkpt();
 
+    //cortex_m::asm::bkpt();
     imu_driver
         .enable_rotation_vector(IMU_REPORTING_INTERVAL_MS)
         .unwrap();
@@ -69,7 +68,7 @@ fn main() -> ! {
 
     loop {
         let _msg_count = imu_driver.handle_all_messages(&mut delay_source, 1u8);
-        // rprintln!("> {}", _msg_count);
+        if _msg_count > 0 { rprintln!("> {}", _msg_count); }
 
         let _ = user_led1.toggle();
         delay_source.delay_ms(loop_interval);

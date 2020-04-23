@@ -90,7 +90,6 @@ pub fn setup_peripherals() -> (
         // SPI chip select CS
         let csn = gpiob
             .pb0
-            // .into_open_drain_output(&mut gpiob.moder, &mut gpiob.otyper);
             .into_push_pull_output(&mut gpiob.moder, &mut gpiob.otyper);
 
         // HINTN interrupt pin
@@ -101,7 +100,6 @@ pub fn setup_peripherals() -> (
         // NRSTN pin
         let reset_pin = gpiob
             .pb10
-            //.into_open_drain_output(&mut gpiob.moder, &mut gpiob.otyper);
             .into_push_pull_output(&mut gpiob.moder, &mut gpiob.otyper);
 
         SpiControlLines {
